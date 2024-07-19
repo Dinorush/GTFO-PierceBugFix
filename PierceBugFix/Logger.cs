@@ -3,7 +3,8 @@
 #nullable disable
 namespace PierceBugFix;
 
-internal static class Logger {
+internal static class Logger
+{
     private static ManualLogSource m_LogSource;
 
     public static void SetupFromInit(ManualLogSource logSource) => Logger.m_LogSource = logSource;
