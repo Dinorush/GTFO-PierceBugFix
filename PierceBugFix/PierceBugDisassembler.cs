@@ -1,14 +1,11 @@
-﻿using Iced.Intel;
+﻿﻿using Iced.Intel;
 using UnityEngine.Assertions;
 
 namespace PierceBugFix;
 
 public class PierceBugDisassembler
 {
-    public const int INC_WE_WANT = 3;
-    public const int INC_EXPECTED = 4;
-    public const int WIDTH_EXPECTED = 3;
-    public static unsafe IntPtr FindThirdInc(IntPtr methodPointer)
+    public static unsafe IntPtr FindInc(IntPtr methodPointer, int index, int totalExpected, ulong widthExpected)
     {
         IntPtr instructionIP = IntPtr.Zero;  // Return value, initialized to null.
 
@@ -29,12 +26,12 @@ public class PierceBugDisassembler
             if (instruction.Mnemonic == Mnemonic.Inc)
             {
                 ++incCount;
-                if (incCount == INC_WE_WANT)
+                if (incCount == index)
                 {
                     instructionIP = (IntPtr)(long)instruction.IP;
 
                     // Error handling.
-                    if ((instruction.NextIP - instruction.IP) != WIDTH_EXPECTED)
+                    if ((instruction.NextIP - instruction.IP) != widthExpected)
                     {
                         Logger.Error("PierceBugFix found an instruction with an unexpected width, this probably means the method has changed in some way and we should avoid changing it.");
                         Environment.FailFast("PierceBugFix found an instruction with an unexpected width, this probably means the method has changed in some way and we should avoid changing it.");
@@ -46,10 +43,10 @@ public class PierceBugDisassembler
         streamCodeReader.Stream.Dispose();
 
         // Error handling.
-        if (incCount != INC_EXPECTED)
+        if (incCount != totalExpected)
         {
-            Logger.Error("PierceBugFix didn't find the correct number of `Inc` instructions in `BulletWeapon.Fire`, this probably means the method has changed in some way and we should avoid changing it.");
-            Environment.FailFast("PierceBugFix didn't find the correct number of `Inc` instructions in `BulletWeapon.Fire`, this probably means the method has changed in some way and we should avoid changing it.");
+            Logger.Error("PierceBugFix didn't find the correct number of `Inc` instructions, this probably means the method has changed in some way and we should avoid changing it.");
+            Environment.FailFast("PierceBugFix didn't find the correct number of `Inc` instructions, this probably means the method has changed in some way and we should avoid changing it.");
         }
         if (instructionIP == IntPtr.Zero)
         {

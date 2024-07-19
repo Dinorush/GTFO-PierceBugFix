@@ -1,4 +1,4 @@
-﻿using BepInEx;
+﻿﻿using BepInEx;
 using BepInEx.Unity.IL2CPP;
 using Gear;
 using Iced.Intel;
@@ -19,8 +19,19 @@ public class Plugin : BasePlugin
     {
         Logger.SetupFromInit(this.Log);
         Logger.Info("PierceBugFix is loading...");
+
+        PatchBulletWeaponFire<BulletWeapon>(3, 4);
+        PatchBulletWeaponFire<Shotgun>(3, 5);
+    }
+
+    private unsafe void PatchBulletWeaponFire<T>(int INC_WE_WANT, int INC_EXPECTED) where T : BulletWeapon
+    {
+        const int WIDTH_EXPECTED = 3;
+        string debugName = typeof(T).Name;
+
+        Logger.Info($"Patching `{debugName}.Fire`");
         // Look for `BulletWeapon.Fire`.
-        INativeClassStruct classStruct = UnityVersionHandler.Wrap((Il2CppClass*) Il2CppClassPointerStore<BulletWeapon>.NativeClassPtr);
+        INativeClassStruct classStruct = UnityVersionHandler.Wrap((Il2CppClass*)Il2CppClassPointerStore<T>.NativeClassPtr);
         for (int i = 0; i < classStruct.MethodCount; ++i)
         {
             INativeMethodInfoStruct methodInfoStruct = UnityVersionHandler.Wrap(classStruct.Methods[i]);
@@ -28,23 +39,23 @@ public class Plugin : BasePlugin
             {
                 // Found `BulletWeapon.Fire`, now find the address of the instruction we want to change.
                 IntPtr methodPointer = methodInfoStruct.MethodPointer;
-                IntPtr instructionIP = PierceBugDisassembler.FindThirdInc(methodPointer);
+                IntPtr instructionIP = PierceBugDisassembler.FindInc(methodPointer, INC_WE_WANT, INC_EXPECTED, WIDTH_EXPECTED);
 
                 // Change that instruction into `NOP`s.
                 using (new MemoryProtectionCookie(instructionIP, Kernel32.MemoryProtectionConstant.ExecuteReadWrite, new IntPtr(16)))
                 {
-                    for (int j = 0; j < PierceBugDisassembler.WIDTH_EXPECTED; ++j)
+                    for (int j = 0; j < WIDTH_EXPECTED; ++j)
                     {
                         *(byte*)((ulong)instructionIP + (ulong)new IntPtr(j)) = NOP;
                     }
                 }
 
                 // Done!
-                Logger.Info("PierceBugFix is loaded!");
+                Logger.Info($"`{debugName}.Fire` is patched!");
                 return;
             }
         }
-        Logger.Error("PierceBugFix failed to find `BulletWeapon.Fire`");
-        Environment.FailFast("PierceBugFix failed to find `BulletWeapon.Fire`");
+        Logger.Error($"PierceBugFix failed to find `{debugName}.Fire`");
+        Environment.FailFast($"PierceBugFix failed to find `{debugName}.Fire`");
     }
 }
