@@ -3,8 +3,7 @@
 #nullable disable
 namespace PierceBugFix.Imports;
 
-internal static class Kernel32
-{
+internal static class Kernel32 {
     [DllImport("kernel32.dll")]
     public static extern IntPtr VirtualAlloc(
       IntPtr lpAddress,
@@ -20,8 +19,7 @@ internal static class Kernel32
       out Kernel32.MemoryProtectionConstant lpflOldProtect);
 
     [Flags]
-    public enum MemoryAllocationConstant : uint
-    {
+    public enum MemoryAllocationConstant : uint {
         Commit = 4096, // 0x00001000
         Reserve = 8192, // 0x00002000
         Reset = 524288, // 0x00080000
@@ -33,8 +31,7 @@ internal static class Kernel32
     }
 
     [Flags]
-    public enum MemoryProtectionConstant : uint
-    {
+    public enum MemoryProtectionConstant : uint {
         NoAccess = 1,
         ReadOnly = 2,
         ReadWrite = 4,

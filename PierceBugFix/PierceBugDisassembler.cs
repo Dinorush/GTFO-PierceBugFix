@@ -1,12 +1,9 @@
-﻿﻿using Iced.Intel;
-using UnityEngine.Assertions;
+﻿using Iced.Intel;
 
 namespace PierceBugFix;
 
-public class PierceBugDisassembler
-{
-    public static unsafe IntPtr FindInc(IntPtr methodPointer, int index, int totalExpected, ulong widthExpected)
-    {
+public class PierceBugDisassembler {
+    public static unsafe IntPtr FindInc(IntPtr methodPointer, int index, int totalExpected, ulong widthExpected) {
         IntPtr instructionIP = IntPtr.Zero;  // Return value, initialized to null.
 
         // Set up the decoder to go through the instructions.
@@ -23,16 +20,13 @@ public class PierceBugDisassembler
         // can be reasonably sure that it will appear after our method and never be inside
         // it.
         {
-            if (instruction.Mnemonic == Mnemonic.Inc)
-            {
+            if (instruction.Mnemonic == Mnemonic.Inc) {
                 ++incCount;
-                if (incCount == index)
-                {
+                if (incCount == index) {
                     instructionIP = (IntPtr)(long)instruction.IP;
 
                     // Error handling.
-                    if ((instruction.NextIP - instruction.IP) != widthExpected)
-                    {
+                    if ((instruction.NextIP - instruction.IP) != widthExpected) {
                         Logger.Error("PierceBugFix found an instruction with an unexpected width, this probably means the method has changed in some way and we should avoid changing it.");
                         Environment.FailFast("PierceBugFix found an instruction with an unexpected width, this probably means the method has changed in some way and we should avoid changing it.");
                     }
@@ -43,13 +37,11 @@ public class PierceBugDisassembler
         streamCodeReader.Stream.Dispose();
 
         // Error handling.
-        if (incCount != totalExpected)
-        {
+        if (incCount != totalExpected) {
             Logger.Error("PierceBugFix didn't find the correct number of `Inc` instructions, this probably means the method has changed in some way and we should avoid changing it.");
             Environment.FailFast("PierceBugFix didn't find the correct number of `Inc` instructions, this probably means the method has changed in some way and we should avoid changing it.");
         }
-        if (instructionIP == IntPtr.Zero)
-        {
+        if (instructionIP == IntPtr.Zero) {
             Logger.Error("PierceBugFix found a zero instruction int pointer for our `Inc` instruction, something has gone terribly wrong.");
             Environment.FailFast("PierceBugFix found a zero instruction int pointer for our `Inc` instruction, something has gone terribly wrong.");
         }
