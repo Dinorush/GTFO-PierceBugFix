@@ -5,7 +5,7 @@ namespace PierceBugFix;
 
 public class PierceBugDisassembler
 {
-    public static unsafe IntPtr FindInc(IntPtr methodPointer, int index, int totalExpected, ulong widthExpected)
+    public static unsafe IntPtr FindInc(IntPtr methodPointer, int index, int totalExpected, int widthExpected)
     {
         IntPtr instructionIP = IntPtr.Zero;  // Return value, initialized to null.
 
@@ -31,7 +31,7 @@ public class PierceBugDisassembler
                     instructionIP = (IntPtr)(long)instruction.IP;
 
                     // Error handling.
-                    if ((instruction.NextIP - instruction.IP) != widthExpected)
+                    if ((instruction.NextIP - instruction.IP) != (ulong)widthExpected)
                     {
                         Logger.Error("PierceBugFix found an instruction with an unexpected width, this probably means the method has changed in some way and we should avoid changing it.");
                         Environment.FailFast("PierceBugFix found an instruction with an unexpected width, this probably means the method has changed in some way and we should avoid changing it.");

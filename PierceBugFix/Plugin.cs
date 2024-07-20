@@ -19,13 +19,12 @@ public class Plugin : BasePlugin
         Logger.SetupFromInit(this.Log);
         Logger.Info("PierceBugFix is loading...");
 
-        PatchBulletWeaponFire<BulletWeapon>(3, 4);
-        PatchBulletWeaponFire<Shotgun>(3, 5);
+        PatchBulletWeaponFire<BulletWeapon>(3, 4, 3);
+        PatchBulletWeaponFire<Shotgun>(3, 5, 3);
     }
 
-    private unsafe void PatchBulletWeaponFire<T>(int INC_WE_WANT, int INC_EXPECTED) where T : BulletWeapon
+    private unsafe void PatchBulletWeaponFire<T>(int incIndex, int incTotalExpected, int incWidthExpected) where T : BulletWeapon
     {
-        const int WIDTH_EXPECTED = 3;
         string debugName = typeof(T).Name;
 
         Logger.Info($"Patching `{debugName}.Fire`");
@@ -38,12 +37,12 @@ public class Plugin : BasePlugin
             {
                 // Found `BulletWeapon.Fire`, now find the address of the instruction we want to change.
                 IntPtr methodPointer = methodInfoStruct.MethodPointer;
-                IntPtr instructionIP = PierceBugDisassembler.FindInc(methodPointer, INC_WE_WANT, INC_EXPECTED, WIDTH_EXPECTED);
+                IntPtr instructionIP = PierceBugDisassembler.FindInc(methodPointer, incIndex, incTotalExpected, incWidthExpected);
 
                 // Change that instruction into `NOP`s.
                 using (new MemoryProtectionCookie(instructionIP, Kernel32.MemoryProtectionConstant.ExecuteReadWrite, new IntPtr(16)))
                 {
-                    for (int j = 0; j < WIDTH_EXPECTED; ++j)
+                    for (int j = 0; j < incWidthExpected; ++j)
                     {
                         *(byte*)((ulong)instructionIP + (ulong)new IntPtr(j)) = NOP;
                     }
