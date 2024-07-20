@@ -1,7 +1,6 @@
 ﻿﻿using BepInEx;
 using BepInEx.Unity.IL2CPP;
 using Gear;
-using Iced.Intel;
 using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.Runtime;
 using Il2CppInterop.Runtime.Runtime.VersionSpecific.Class;
