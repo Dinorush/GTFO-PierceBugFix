@@ -21,13 +21,15 @@ public class Plugin : BasePlugin
 
         PatchBulletWeaponFire<BulletWeapon>(3, 4, 3);
         PatchBulletWeaponFire<Shotgun>(3, 5, 3);
+
+        Logger.Info("PierceBugFix is loaded!");
     }
 
     private unsafe void PatchBulletWeaponFire<T>(int incIndex, int incTotalExpected, int incWidthExpected) where T : BulletWeapon
     {
         string debugName = typeof(T).Name;
 
-        Logger.Info($"Patching `{debugName}.Fire`");
+        Logger.Info($"Patching `{debugName}.Fire`...");
         // Look for `BulletWeapon.Fire`.
         INativeClassStruct classStruct = UnityVersionHandler.Wrap((Il2CppClass*)Il2CppClassPointerStore<T>.NativeClassPtr);
         for (int i = 0; i < classStruct.MethodCount; ++i)
