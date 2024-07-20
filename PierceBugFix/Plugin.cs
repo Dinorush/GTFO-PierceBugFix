@@ -30,14 +30,14 @@ public class Plugin : BasePlugin
         string debugName = typeof(T).Name;
 
         Logger.Info($"Patching `{debugName}.Fire`...");
-        // Look for `BulletWeapon.Fire`.
+        // Look for the appropriate `Fire` method.
         INativeClassStruct classStruct = UnityVersionHandler.Wrap((Il2CppClass*)Il2CppClassPointerStore<T>.NativeClassPtr);
         for (int i = 0; i < classStruct.MethodCount; ++i)
         {
             INativeMethodInfoStruct methodInfoStruct = UnityVersionHandler.Wrap(classStruct.Methods[i]);
             if (Marshal.PtrToStringAnsi(methodInfoStruct.Name) == "Fire")
             {
-                // Found `BulletWeapon.Fire`, now find the address of the instruction we want to change.
+                // Found the `Fire` method, now find the address of the instruction we want to change.
                 IntPtr methodPointer = methodInfoStruct.MethodPointer;
                 IntPtr instructionIP = PierceBugDisassembler.FindInc(methodPointer, incIndex, incTotalExpected, incWidthExpected);
 
