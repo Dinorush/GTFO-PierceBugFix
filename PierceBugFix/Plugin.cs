@@ -1,6 +1,7 @@
 ﻿using BepInEx;
 using BepInEx.Unity.IL2CPP;
 using Gear;
+using HarmonyLib;
 using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.Runtime;
 using Il2CppInterop.Runtime.Runtime.VersionSpecific.Class;
@@ -10,9 +11,10 @@ using System.Runtime.InteropServices;
 
 namespace PierceBugFix;
 
-[BepInPlugin("tru0067.PierceBugFix", "PierceBugFix", "1.0.0")]
+[BepInPlugin(GUID, "PierceBugFix", "1.0.0")]
 public class Plugin : BasePlugin
 {
+    internal const string GUID = "tru0067.PierceBugFix";
     public const int NOP = 0x90;
     public override unsafe void Load()
     {
@@ -21,6 +23,7 @@ public class Plugin : BasePlugin
 
         PatchBulletWeaponFire<BulletWeapon>(3, 4, 3);
         PatchBulletWeaponFire<Shotgun>(3, 5, 3);
+        new Harmony(GUID).PatchAll();
 
         Logger.Info("PierceBugFix is loaded!");
     }
