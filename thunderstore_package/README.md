@@ -12,6 +12,10 @@ increments the number counting up to 5 into a `nop` or do nothing instruction. T
 number to never reach 5, completely removing the hardcoded limit. Shots still naturally terminate
 when hitting something non-damageable or if their actual piercing limit is reached.
 
+It additionally changes the behaviour of shotguns piercing to no longer re-evaluate the spread on
+every pierce. In the base game every pierce causes the spread of the shotgun shot to continually
+increase, this mod fixes this so that each pellet simply continues on its original trajectory.
+
 You can find the dev feedback thread on the GTFO modding discord here:
 <https://discord.com/channels/782438773690597389/1263680596643680338>
 
@@ -21,4 +25,4 @@ None! Please let me know if you encounter any!
 ### Acknowledgements
 Kasuromi for [SniperMeleeFix](https://thunderstore.io/c/gtfo/p/Kasuromi/SniperMeleeFix/), which much
 of this fix is based on. randomuserhi for suggesting the use of no-ops and for implementing the fix
-for shotguns!
+for shotguns! Dinorush for initial discussion and for implementing the fix for shotgun spread!
