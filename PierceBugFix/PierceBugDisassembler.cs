@@ -16,7 +16,7 @@ public class PierceBugDisassembler
         Instruction instruction = new();
         decoder.Decode(out instruction);
 
-        // We are looking for the third `Inc` instruction in this method.
+        // We are looking for the `index`th `Inc` instruction in this method.
         int incCount = 0;
         while (instruction.Mnemonic != Mnemonic.Int3)
         // `Int3` is an opcode that is sometimes used to halt execution for a debugger. We

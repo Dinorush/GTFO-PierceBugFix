@@ -21,8 +21,10 @@ public class Plugin : BasePlugin
         Logger.SetupFromInit(this.Log);
         Logger.Info("PierceBugFix is loading...");
 
+        // Patch pierce bug for both bullet weapons and shotguns.
         PatchBulletWeaponFire<BulletWeapon>(3, 4, 3);
         PatchBulletWeaponFire<Shotgun>(3, 5, 3);
+
         new Harmony(GUID).PatchAll();
 
         Logger.Info("PierceBugFix is loaded!");

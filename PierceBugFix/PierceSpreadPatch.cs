@@ -21,6 +21,7 @@ namespace PierceBugFix
         [HarmonyPostfix]
         private static void PostRayCallback(ref WeaponHitData weaponRayData)
         {
+            // Reset shotgun spread data so that shotguns don't re-evaluate spread every pierce.
             weaponRayData.randomSpread = 0;
             weaponRayData.angOffsetX = 0;
             weaponRayData.angOffsetY = 0;
